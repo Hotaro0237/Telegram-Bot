@@ -1,0 +1,39 @@
+[
+    {
+      "intent": "greeting",
+      "utterances": [
+        "hi",
+        "hello",
+        "hey"
+      ],
+      "answer": "Hello! How can I help you today?"
+    },
+    {
+      "intent": "goodbye",
+      "utterances": [
+        "bye",
+        "goodbye",
+        "see you later"
+      ],
+      "answer": "Goodbye! Have a nice day."
+    },
+    {
+      "intent": "thanks",
+      "utterances": [
+        "thank you",
+        "thanks",
+        "appreciate it"
+      ],
+      "answer": "You're welcome! Is there anything else I can help you with?"
+    },
+    {
+      "intent": "weather",
+      "utterances": [
+        "what's the weather like",
+        "is it raining",
+        "will it snow"
+      ],
+      "answer": "I'm sorry, I don't have information about the weather."
+    }
+  ]
+  

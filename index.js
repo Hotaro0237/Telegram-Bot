@@ -11,9 +11,9 @@ const help = `Hi this is Hotaro
 /meme : to see a Dankmeme
 /meme <any_no.> : to see multiple meme at a time [Max : 50]`
 
-bot.start((ctx) => {
-  ctx.reply(help)
-});
+// bot.start((ctx) => {
+  // ctx.reply(help)
+// });
 
 bot.command('help', (ctx) => {
   ctx.reply(help)
@@ -74,6 +74,39 @@ bot.command('meme', async (ctx) => {
     }
   }
 })
+
+bot.command('news', async (ctx) =>{
+  let location = 'in'; // default location
+  const apiKey = process.env.News_Api
+  const apiUrl = `https://newsapi.org/v2/top-headlines?country=${location}&apiKey=${apiKey}`
+
+  // check if location is specified in the command
+  const commandArgs = ctx.message.text.split(' ');
+  if (commandArgs.length > 1) {
+    location = commandArgs[1];
+    let apiUrl = `https://newsapi.org/v2/top-headlines?country=${location}&apiKey=${apiKey}`;
+  }
+
+  try {
+    const res = await axios.get(apiUrl)
+    const articles = res.data.articles
+    let message = `Here are the latest news headlines from ${location}\n\n`
+
+    for (let i = 0; i < articles.length; i++) {
+      const article = articles[i];
+      message += `${article.title}\n${article.description}\n\n`;
+
+      if (message.length >= 3000 || i === articles.length - 1) {
+        ctx.reply(message);
+        message = '';
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    ctx.reply('Sorry, something went wrong.')
+  }
+})
+
 cron.schedule('0 6 * * *', () => {
   sendWeatherReport(chatId)
 })
