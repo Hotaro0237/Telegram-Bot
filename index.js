@@ -6,13 +6,15 @@ const bot = new Telegraf(process.env.Bot_Token)
 const YOUR_API_KEY = process.env.YOUR_API_KEY
 
 const help = `Hi this is Hotaro 
-/weather <City_name> : to see the weather at any location 
 /help : to see this
-/meme : to see a Dankmeme
-/meme <any_no.> : to see multiple meme at a time [Max : 50]`
+/weather <City_name> : to see the weather at any location 
+/meme : to see a meme
+/meme <any_no.> : to see multiple meme at a time [Max : 50]
+/news : to see latest news of India
+/news <country_code> : to see the latest news of your choice of country`
 
 // bot.start((ctx) => {
-  // ctx.reply(help)
+// ctx.reply(help)
 // });
 
 bot.command('help', (ctx) => {
@@ -24,6 +26,10 @@ const chatId = '1628311206'
 
 bot.command('weather', async (ctx) => {
   // const location = ctx.message.text.slice(9)
+  const now = new Date();
+  const message = `[${now.toLocaleString()}] User ${ctx.from.first_name} (${ctx.from.username}) requested Weather Info`
+  ctx.telegram.sendMessage('-849365318', message)
+  ctx.telegram.sendChatAction(ctx.message.chat.id, 'typing')
   const location = ctx.message.text.split(' ')[1];
   if (!location) return ctx.reply('Please specify a city');
   async function sendWeatherReport(chatId) {
@@ -51,6 +57,10 @@ bot.command('weather', async (ctx) => {
 })
 
 bot.command('meme', async (ctx) => {
+  const now = new Date();
+  const message = `[${now.toLocaleString()}] User ${ctx.from.first_name} (${ctx.from.username}) requested a meme`
+  ctx.telegram.sendMessage('-849365318', message)
+  ctx.telegram.sendChatAction(ctx.message.chat.id, 'upload_photo')
   const count = ctx.message.text.split(' ')[1];
   // console.log(count);
   if (count) {
@@ -75,7 +85,11 @@ bot.command('meme', async (ctx) => {
   }
 })
 
-bot.command('news', async (ctx) =>{
+bot.command('news', async (ctx) => {
+  const now = new Date();
+  const message = `[${now.toLocaleString()}] User ${ctx.from.first_name} (${ctx.from.username}) requested News`
+  ctx.telegram.sendMessage('-849365318', message)
+  ctx.telegram.sendChatAction(ctx.message.chat.id, 'typing')
   let location = 'in'; // default location
   const apiKey = process.env.News_Api
   const apiUrl = `https://newsapi.org/v2/top-headlines?country=${location}&apiKey=${apiKey}`
@@ -83,30 +97,52 @@ bot.command('news', async (ctx) =>{
   // check if location is specified in the command
   const commandArgs = ctx.message.text.split(' ');
   if (commandArgs.length > 1) {
-    location = commandArgs[1];
-    let apiUrl = `https://newsapi.org/v2/top-headlines?country=${location}&apiKey=${apiKey}`;
-  }
-
-  try {
-    const res = await axios.get(apiUrl)
-    const articles = res.data.articles
-    let message = `Here are the latest news headlines from ${location}\n\n`
-
-    for (let i = 0; i < articles.length; i++) {
-      const article = articles[i];
-      message += `${article.title}\n${article.description}\n\n`;
-
-      if (message.length >= 3000 || i === articles.length - 1) {
-        ctx.reply(message);
-        message = '';
+    let l = commandArgs[1];
+    let apiUrl2 = `https://newsapi.org/v2/top-headlines?country=${l}&apiKey=${apiKey}`;
+    
+    try {
+      const res = await axios.get(apiUrl2)
+      const articles = res.data.articles
+      let message = `Here are the latest news headlines from ${l}\n\n`
+      
+      for (let i = 0; i < articles.length; i++) {
+        const article = articles[i];
+        message += `${article.title}\n${article.description}\n\n`;
+        
+        if (message.length >= 3000 || i === articles.length - 1) {
+          ctx.reply(message);
+          message = '';
+        }
       }
+    } catch (error) {
+      console.log(error);
+      ctx.reply('Sorry, something went wrong.')
     }
-  } catch (error) {
-    console.log(error);
-    ctx.reply('Sorry, something went wrong.')
+  } else {
+    try {
+      const res = await axios.get(apiUrl)
+      const articles = res.data.articles
+      let message = `Here are the latest news headlines from ${location}\n\n`
+      
+      for (let i = 0; i < articles.length; i++) {
+        const article = articles[i];
+        message += `${article.title}\n${article.description}\n\n`;
+        
+        if (message.length >= 3000 || i === articles.length - 1) {
+          ctx.reply(message);
+          message = '';
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      ctx.reply('Sorry, something went wrong.')
+    }
   }
+  })
+  
+bot.mention((ctx) => {
+  ctx.reply(`Hi ${ctx.message.from.first_name}! You mentioned me.`)
 })
-
 cron.schedule('0 6 * * *', () => {
   sendWeatherReport(chatId)
 })
