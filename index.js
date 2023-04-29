@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Telegraf } = require('telegraf');
+const { Telegraf, Markup } = require('telegraf');
 const axios = require('axios')
 const cron = require('node-cron')
 const bot = new Telegraf(process.env.Bot_Token)
@@ -13,9 +13,9 @@ const help = `Hi this is Hotaro
 /news : to see latest news of India
 /news <country_code> : to see the latest news of your choice of country`
 
-// bot.start((ctx) => {
-// ctx.reply(help)
-// });
+bot.start((ctx) => {
+ctx.reply(help)
+});
 
 bot.command('help', (ctx) => {
   ctx.reply(help)
@@ -28,10 +28,11 @@ bot.command('weather', async (ctx) => {
   // const location = ctx.message.text.slice(9)
   const now = new Date();
   const message = `[${now.toLocaleString()}] User ${ctx.from.first_name} (${ctx.from.username}) requested Weather Info`
-  ctx.telegram.sendMessage('-849365318', message)
+  ctx.telegram.sendMessage('-1001916976667', message)
   ctx.telegram.sendChatAction(ctx.message.chat.id, 'typing')
   const location = ctx.message.text.split(' ')[1];
   if (!location) return ctx.reply('Please specify a city');
+
   async function sendWeatherReport(chatId) {
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${YOUR_API_KEY}&units=metric`
 
@@ -59,7 +60,8 @@ bot.command('weather', async (ctx) => {
 bot.command('meme', async (ctx) => {
   const now = new Date();
   const message = `[${now.toLocaleString()}] User ${ctx.from.first_name} (${ctx.from.username}) requested a meme`
-  ctx.telegram.sendMessage('-849365318', message)
+  // ctx.telegram.sendMessage('-849365318', message)
+  ctx.telegram.sendMessage('-1001916976667', message)
   ctx.telegram.sendChatAction(ctx.message.chat.id, 'upload_photo')
   const count = ctx.message.text.split(' ')[1];
   // console.log(count);
@@ -79,8 +81,8 @@ bot.command('meme', async (ctx) => {
       const { url, title } = res.data
       ctx.replyWithPhoto(url, { caption: title })
     } catch (error) {
-      console.error(error);
       ctx.reply('Sorry, I could not fetch a meme at the moment. Please try again later.');
+      console.error(error);
     }
   }
 })
@@ -88,7 +90,7 @@ bot.command('meme', async (ctx) => {
 bot.command('news', async (ctx) => {
   const now = new Date();
   const message = `[${now.toLocaleString()}] User ${ctx.from.first_name} (${ctx.from.username}) requested News`
-  ctx.telegram.sendMessage('-849365318', message)
+  ctx.telegram.sendMessage('-1001916976667', message)
   ctx.telegram.sendChatAction(ctx.message.chat.id, 'typing')
   let location = 'in'; // default location
   const apiKey = process.env.News_Api
