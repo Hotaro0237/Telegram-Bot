@@ -24,6 +24,9 @@ bot.command('help', (ctx) => {
 const chatId = '1628311206'
 // const location = 'Haldwani'
 
+bot.on('launch', async (ctx) =>{
+  await ctx.telegram.sendMessage('-1001916976667', 'Bot is online!')
+})
 bot.command('weather', async (ctx) => {
   // const location = ctx.message.text.slice(9)
   const now = new Date();
@@ -141,7 +144,6 @@ bot.command('news', async (ctx) => {
     }
   }
   })
-  
 bot.mention((ctx) => {
   ctx.reply(`Hi ${ctx.message.from.first_name}! You mentioned me.`)
 })
