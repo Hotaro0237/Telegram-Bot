@@ -1,7 +1,7 @@
-require('dotenv').config();
+const dotenv = require('dotenv')
 const { Telegraf } = require('telegraf');
 const axios = require('axios')
-const cron = require('node-cron')
+dotenv.load()
 const bot = new Telegraf(process.env.Bot_Token)
 const YOUR_API_KEY = process.env.YOUR_API_KEY
 
@@ -14,19 +14,13 @@ const help = `Hi this is Hotaro
 /news <country_code> : to see the latest news of your choice of country`
 
 bot.start((ctx) => {
-ctx.reply(help)
+  ctx.reply(help)
 });
 
 bot.command('help', (ctx) => {
   ctx.reply(help)
 })
 
-const chatId = '1628311206'
-// const location = 'Haldwani'
-
-bot.on('launch', async (ctx) =>{
-  await ctx.telegram.sendMessage('-1001916976667', 'Bot is online!')
-})
 bot.command('weather', async (ctx) => {
   // const location = ctx.message.text.slice(9)
   const now = new Date();
@@ -94,7 +88,6 @@ bot.command('news', async (ctx) => {
   const now = new Date();
   const message = `[${now.toLocaleString()}] User ${ctx.from.first_name} (${ctx.from.username}) requested News`
   ctx.telegram.sendMessage('-1001916976667', message)
-  ctx.telegram.sendChatAction(ctx.message.chat.id, 'typing')
   let location = 'in'; // default location
   const apiKey = process.env.News_Api
   const apiUrl = `https://newsapi.org/v2/top-headlines?country=${location}&apiKey=${apiKey}`
@@ -104,16 +97,17 @@ bot.command('news', async (ctx) => {
   if (commandArgs.length > 1) {
     let l = commandArgs[1];
     let apiUrl2 = `https://newsapi.org/v2/top-headlines?country=${l}&apiKey=${apiKey}`;
-    
+
     try {
+      ctx.telegram.sendChatAction(ctx.message.chat.id, 'typing')
       const res = await axios.get(apiUrl2)
       const articles = res.data.articles
       let message = `Here are the latest news headlines from ${l}\n\n`
-      
+
       for (let i = 0; i < articles.length; i++) {
         const article = articles[i];
         message += `${article.title}\n${article.description}\n\n`;
-        
+
         if (message.length >= 3000 || i === articles.length - 1) {
           ctx.reply(message);
           message = '';
@@ -125,30 +119,29 @@ bot.command('news', async (ctx) => {
     }
   } else {
     try {
+      ctx.telegram.sendChatAction(ctx.message.chat.id, 'typing')
       const res = await axios.get(apiUrl)
       const articles = res.data.articles
       let message = `Here are the latest news headlines from ${location}\n\n`
-      
+
       for (let i = 0; i < articles.length; i++) {
         const article = articles[i];
         message += `${article.title}\n${article.description}\n\n`;
-        
+
         if (message.length >= 3000 || i === articles.length - 1) {
           ctx.reply(message);
           message = '';
         }
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
+      ctx.telegram.sendChatAction(ctx.message.chat.id, 'typing')
       ctx.reply('Sorry, something went wrong.')
     }
   }
-  })
+})
 bot.mention((ctx) => {
   ctx.reply(`Hi ${ctx.message.from.first_name}! You mentioned me.`)
 })
-cron.schedule('0 6 * * *', () => {
-  sendWeatherReport(chatId)
-})
 
-bot.launch(); 
+bot.launch() 
