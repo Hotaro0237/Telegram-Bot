@@ -4,6 +4,8 @@ const axios = require('axios')
 const bot = new Telegraf(process.env.Bot_Token)
 const YOUR_API_KEY = process.env.YOUR_API_KEY
 
+dotenv.load()
+
 const help = `Hi this is Hotaro 
 /help : to see this
 /weather <City_name> : to see the weather at any location 
