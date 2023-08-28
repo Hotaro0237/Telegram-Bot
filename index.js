@@ -1,10 +1,9 @@
-const dotenv = require('dotenv')
+require('dotenv').config()
 const { Telegraf } = require('telegraf');
 const axios = require('axios')
+
 const bot = new Telegraf(process.env.Bot_Token)
 const YOUR_API_KEY = process.env.YOUR_API_KEY
-
-dotenv.load()
 
 const help = `Hi this is Hotaro 
 /help : to see this
@@ -145,4 +144,4 @@ bot.mention((ctx) => {
   ctx.reply(`Hi ${ctx.message.from.first_name}! You mentioned me.`)
 })
 
-bot.launch() 
+bot.launch(); 
