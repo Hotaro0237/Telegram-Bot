@@ -2,7 +2,7 @@ require('dotenv').config();
 const { Telegraf } = require('telegraf');
 const axios = require('axios')
 const cron = require('node-cron')
-const bot = new Telegraf("5383319279:AAHozd2gIDj3ql2ZH2GVxVHCq2No_WWoIpo")
+const bot = new Telegraf(process.env.BOT_TOKEN)
 const YOUR_API_KEY = process.env.YOUR_API_KEY
 
 const help = `Hi this is Hotaro 
